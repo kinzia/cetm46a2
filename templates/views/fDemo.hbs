@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://getbootstrap.com/docs/3.3/dist/css/bootstrap.min.css" >
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <link href="https://getbootstrap.com/docs/3.3/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+  <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+  <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+  <script src="https://getbootstrap.com/docs/3.3/assets/js/ie-emulation-modes-warning.js"></script>
+
+  <title>YELP</title>
+
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://getbootstrap.com/docs/3.3/examples/carousel/carousel.css" rel="stylesheet">
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<body onload="start()">
+
+ <!-- <h1>Yelp</h1>-->
+
+  
+<div class="bs-docs-example">
+ <label for="restaurant">Choose a restaurant:</label>
+    <select id="usuarios" class="selectpicker" onchange="run()"></select>
+</div>
+    
+   <!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Example headline.</h1>
+              <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous" Glyphicon buttons on the left and right might not load/display properly due to web browser security rules.</p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img class="second-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>Another example headline.</h1>
+              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1>One more for good measure.</h1>
+              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+              <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div><!-- /.carousel -->
+
+
+
+
+
+
+	<!--<select id="usuarios" onchange="run()"></select> -->
+  <ul id="Yelp"></ul>
+    <p>businessName</p> 
+    <div id="businessName"></div>
+    <div id="selectedRestaurantImg"></div>
+    <div id="displayAddress"></div>
+    <div id="displayPhone"></div>
+    <p>isClosed</p>
+    <div id="isClosed"></div>
+    <p>rating</p>
+    <div id="rating"></div>
+    <p>reviewCount</p>
+    <div id="reviewCount"></div>
+    <div id="longlat"></div>
+    <div id="test"></div>
+<div class="row">
+  <div class="col-sm-6 col-md-4">
+    <div class="thumbnail">
+      <img src="..." alt="...">
+      <div class="caption">
+        <h3>Thumbnail label</h3>
+        <p><a href="#" class="btn btn-primary" role="button" onclick ="run('6TSpAuUdmo2UEn9emgd8xg')">Button</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script id="functionRun">
+
+function createMenu(){
+
+      $(document).on('ready',function (){
+		  $.getJSON('arules.json', function(data) { 
+			$.each(data, function(name, business_id) {
+			$("#usuarios").append('<option value="' + business_id.business_id + '">' + business_id.name + '</option>');
+			}); 
+      console.log("create Menu");
+		}); 
+	});
+}
+function run(p1){
+  if(p1!=null){
+    console.log(p1)
+    window.restID =p1;
+  }else{
+    window.restID = document.getElementById('usuarios').value;
+  }
+ // window.restID = restValue;
+  if(window.restID.length ==0){
+    window.restID = '4LhURdgGRofYSR_1LBTXvQ'
+  }
+  const url = '/yelp?address='+window.restID;
+  fetch(url).then((resp) => resp.json()).then(function(data) {
+    var blink = data.url;
+    var lat_1 = data.lat_1;
+    var long_1 = data.long_1;
+    var long_1_str = long_1.toString();
+    var lat_1_str = lat_1.toString(); 
+    document.getElementById("businessName").innerHTML = data.bName;
+    document.getElementById('selectedRestaurantImg').innerHTML = '<img src="' + blink + '" width="100" height="100""/>';
+    document.getElementById('longlat').innerHTML ='<iframe id ="longlat" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/map/?long='+long_1_str+'&lat='+lat_1_str+'" marginwidth="0" marginheight="0" style="height:500px; width:100%;" scrolling="no"></iframe>';
+    document.getElementById('displayAddress').innerHTML = data.displayAddress;
+    document.getElementById('displayPhone').innerHTML = data.displayPhone;
+    document.getElementById('isClosed').innerHTML = data.isClosed;
+    document.getElementById('rating').innerHTML = data.rating;
+    document.getElementById('reviewCount').innerHTML = data.reviewCount;
+  })
+  .catch(function(error) {
+        console.log(JSON.stringify(error));
+  });  
+  var list = document.getElementById("test");
+
+  while (list.hasChildNodes()) {  
+    list.removeChild(list.firstChild);
+  }
+  $.getJSON('arules.json', function(arulesData) {
+
+      var dataArray=arulesData[0].LHS.split(",");
+      for(i = 0; i<arulesData.length; i++){
+          if(arulesData[i].business_id == window.restID){
+            console.log(arulesData[i].name)
+            var dataArray=arulesData[i].LHS.split(",");
+            for(j = 0; j < dataArray.length; j++){
+              console.log(dataArray[j])
+              const arulesUrl = '/yelp?address='+dataArray[j];
+              
+              fetch(arulesUrl).then((resp) => resp.json()).then(function(data) {
+                console.log(data.bName);
+                console.log(data.url);     
+
+                  var btn = document.createElement("DIV");
+                 // btn.innerHTML = '<div class="jumbotron"> <h1>'+data.bName+
+                  //  '</h1> <p>...</p><p><a class="btn btn-primary btn-lg" href="#" role="button" onclick="run()">Learn more</a></p></div>';
+                  btn.innerHTML = '<div class="row"><div class="col-sm-4 col-md-4"><div class="thumbnail"><img src="'+
+                  data.url+'" alt="..."><div class="caption"><p><a href="#" class="btn btn-primary" role="button" onclick="run('+"'"+data.id+"'"+')">'+
+                    data.bName+'</a></p></div></div></div</div>';
+                  document.body.appendChild(btn);
+
+                  document.getElementById("test").appendChild(btn);
+
+              })
+              .catch(function(error) {
+                    console.log(JSON.stringify(error));
+              }); 
+
+            }
+
+          }
+      }
+  })
+}
+function start(){
+  console.log('start');
+  createMenu();
+  run();
+  
+}
+/*
+  function createNode(element) {
+      return document.createElement(element);
+  }
+
+  function append(parent, el) {
+    return parent.appendChild(el);
+  }
+  */
+</script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="https://getbootstrap.com/docs/3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="https://getbootstrap.com/docs/3.3/assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="https://getbootstrap.com/docs/3.3/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<script>
+        $(document).on('ready',function (){
+		  $.getJSON('arules.json', function(data) { 
+			$.each(data, function(name, business_id) {
+			$("#usuarios").append('<option value="' + business_id.business_id + '">' + business_id.name + '</option>');
+			}); 
+      console.log("create Menu");
+		}); 
+	});
+</script>
+</body>
+
+</html>

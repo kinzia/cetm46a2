@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Theme Made By www.w3schools.com - No Copyright -->
+  <title>Yelp Shop Recommendation</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="../js/d3.js"></script>
+  <script src="../js/clock.js"></script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="/__/firebase/7.15.4/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="/__/firebase/7.15.4/firebase-analytics.js"></script>
+
+<!-- Initialize Firebase -->
+<script src="/__/firebase/init.js"></script>
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+#chart {
+  max-width: 650px;
+  margin: 35px auto;
+}
+
+  body {
+    font: 400 15px/1.8 Lato, sans-serif;
+    color: #777;
+  }
+  h3, h4 {
+    margin: 10px 0 30px 0;
+    letter-spacing: 10px;      
+    font-size: 20px;
+    color: #111;
+  }
+  .container {
+    padding: 80px 120px;
+  }
+  .person {
+    border: 10px solid transparent;
+    margin-bottom: 25px;
+    width: 80%;
+    height: 80%;
+    opacity: 0.7;
+  }
+  .person:hover {
+    border-color: #f1f1f1;
+  }
+  .carousel-inner img {
+    /*-webkit-filter: grayscale(90%);
+    filter: grayscale(90%); /* make all photos black and white */ 
+    /*width: 100%; 
+    margin: auto;*/
+  object-fit: cover;
+  object-position: 0% 30%;
+
+  width: 100%;
+  height: 600px;
+  }
+  .carousel-caption h3 {
+    color: #fff !important;
+  }
+  @media (max-width: 600px) {
+    .carousel-caption {
+      display: none; /* Hide the carousel text when the screen is less than 600 pixels wide */
+    }
+  }
+  .bg-1 {
+    background: #2d2d30;
+    color: #bdbdbd;
+  }
+  .bg-1 h3 {color: #fff;}
+  .bg-1 p {font-style: italic;}
+  .list-group-item:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+  .list-group-item:last-child {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .thumbnail {
+    padding: 0 0 15px 0;
+    border: none;
+    border-radius: 0;
+  }
+  .thumbnail p {
+    margin-top: 15px;
+    color: #555;
+  }
+  .btn {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #f1f1f1;
+    border-radius: 0;
+    transition: .2s;
+  }
+  .btn:hover, .btn:focus {
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #000;
+  }
+  .modal-header, h4, .close {
+    background-color: #333;
+    color: #fff !important;
+    text-align: center;
+    font-size: 30px;
+  }
+  .modal-header, .modal-body {
+    padding: 40px 50px;
+  }
+  .nav-tabs li a {
+    color: #777;
+  }
+  #googleMap {
+    width: 100%;
+    height: 400px;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+  }  
+  .navbar {
+    font-family: Montserrat, sans-serif;
+    margin-bottom: 0;
+    background-color: #2d2d30;
+    border: 0;
+    font-size: 11px !important;
+    letter-spacing: 4px;
+    opacity: 0.9;
+  }
+  .navbar li a, .navbar .navbar-brand { 
+    color: #d5d5d5 !important;
+  }
+  .navbar-nav li a:hover {
+    color: #fff !important;
+  }
+  .navbar-nav li.active a {
+    color: #fff !important;
+    background-color: #29292c !important;
+  }
+  .navbar-default .navbar-toggle {
+    border-color: transparent;
+  }
+  .open .dropdown-toggle {
+    color: #fff;
+    background-color: #555 !important;
+  }
+  .dropdown-menu li a {
+    color: #000 !important;
+  }
+  .dropdown-menu li a:hover {
+    background-color: red !important;
+  }
+  footer {
+    background-color: #2d2d30;
+    color: #f5f5f5;
+    padding: 32px;
+  }
+  footer a {
+    color: #f5f5f5;
+  }
+  footer a:hover {
+    color: #777;
+    text-decoration: none;
+  }  
+  .form-control {
+    border-radius: 0;
+  }
+  textarea {
+    resize: none;
+  }
+     line {
+  display: block;
+  stroke: black;
+}
+  </style>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50"  onload="run('NQXuoB9JTPUItHvouMgWjQ')">
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#myPage">YELP</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#myPage">HOME</a></li>
+        <li><a href="#info">INFO</a></li>
+        <li><a href="#map">MAP</a></li>
+        <li><a href="#showRecommendation">RECOMMENDATION</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">SHOP LIST
+          <span class="caret"></span></a>
+          <ul id="usuarios_dropdown" class="dropdown-menu">
+            <li role="separator" class="divider"></li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <div id="selectedRestaurantImg1"></div>
+        <div class="carousel-caption">
+          <div id="businessName1"></div>
+          <div id="title1"></div>
+        </div>      
+      </div>
+
+      <div class="item">
+        <div id="selectedRestaurantImg2"></div>
+        <div class="carousel-caption">
+          <div id="businessName2"></div>
+          <div id="title2"></div>
+        </div>      
+      </div>
+    
+      <div class="item">
+        <div id="selectedRestaurantImg3"></div>
+        <div class="carousel-caption">
+          <div id="businessName3"></div>
+          <div id="title3"></div>
+         </div>      
+      </div>
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+</div>
+
+<!-- Container (The Band Section) -->
+<div id="info" class="container text-center">
+  <div id="businessName"></div>
+  <div id="displayAddress"></div>
+  <div id="displayPhone"></div>
+   <br>
+  <div class="row">
+    <div class="col-sm-4">
+      <div id="ClockDiv"></div>
+      <p class="text-center"><strong>Opening Hours in Les vegas</strong></p>
+      <div id="DetailTime"></div>
+
+    </div>
+    <div class="col-sm-4">
+      <div id="GradientChart"></div>
+      <p class="text-center"><strong>Total Reviews & Average Rating</strong></p><br>
+    </div>
+    <div class="col-sm-4">
+      <div id="barChart"></div>
+      <p class="text-center"><strong>Recent Ratings</strong></p><br>
+    </div>
+  </div>
+</div>
+
+<!-- Container (TOUR Section) -->
+<div id="map" class="bg-1">
+  <div id="longlat" ></div>
+  <div class="container">
+    <h3 class="text-center">We guess you may like</h3>
+    
+    <div class="row text-center">
+      <div id="showRecommendation"></div>
+    </div>
+  </div>
+  
+
+</div>
+
+
+
+<div id="showRecommendation"></div>
+<div id="selectedRestaurantImg"></div>
+
+<!--<div id="chart"></div>-->
+<footer class="text-center">
+  <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a><br></br>
+  <p>Yelp Shop Recommendation  Made By</br>Chow Chi Kin, Kevin</br>bh63np@student.sunderland.ac.uk</p></br>
+
+</footer>
+
+
+
+
+<script id="functionRun">
+var rFlag = 0;
+var restRec = [];
+function run(p1){
+
+  window.restID =p1;
+  restRec.push(restID);
+//  console.log(restRec);
+ // window.restID = restValue;
+  if(window.restID.length ==0){
+    window.restID = 'NQXuoB9JTPUItHvouMgWjQ'
+  }
+  const reviewUrl = '/yelpReviews?address='+window.restID;
+  fetch(reviewUrl).then((resp) => resp.json()).then(function(data) {
+    var reviewJson = data.reviewJson;
+   //console.log(data.reviewJson.reviews.length);
+    for (i=0;i<data.reviewJson.reviews.length;i++){
+      var dateCreated = new Date(data.reviewJson.reviews[i].time_created);
+      var yyyy = dateCreated.getFullYear();
+      var dd = dateCreated.getDate();
+      var mm = dateCreated.getMonth()+1;
+      //console.log("timeCreated:"+data.reviewJson.reviews[i].time_created);
+      //console.log("dateCreate:"+yyyy+"/"+mm+"/"+dd);
+      //console.log("rating:"+data.reviewJson.reviews[i].rating);
+      if(i==0){
+        var d0 = yyyy+"/"+mm+"/"+dd;
+        var r0 = data.reviewJson.reviews[i].rating;
+      }
+      if(i==1){
+        var d1 = yyyy+"/"+mm+"/"+dd;
+        var r1 = data.reviewJson.reviews[i].rating;
+      }
+      if(i==2){
+        var d2 = yyyy+"/"+mm+"/"+dd;
+        var r2 = data.reviewJson.reviews[i].rating;
+      }
+    }
+    //console.log(data.reviewJson.reviews[0]);
+    var barChartOptions = {
+          series: [{
+          data: [r0, r1, r2]
+          
+        }],
+          chart: {
+          type: 'bar',
+          height: 200,
+          toolbar: {
+            show: false
+          }
+        },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: [d0, d1, d2],
+        }
+    };
+    var barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
+    barChart.render();
+  })
+  .catch(function(error) {
+        console.log(JSON.stringify(error));
+  });  
+  
+  const url = '/yelp?address='+window.restID;
+  fetch(url).then((resp) => resp.json()).then(function(data) {
+    var blink1 = data.url1;
+    var blink2 = data.url2;
+    var blink3 = data.url3;
+    var lat_1 = data.lat_1;
+    var long_1 = data.long_1;
+    var long_1_str = long_1.toString();
+    var lat_1_str = lat_1.toString(); 
+   // console.log(data.open[0]);
+   // console.log(data.open[0].start/100);
+   // console.log((data.open[0].end/100)-12);
+    var startTime = data.open[0].start/100;
+    var endTime = (data.open[0].end/100)-12;
+    document.getElementById('ClockDiv').innerHTML='<div class="ClockChart" id="ClockDiv"></div>';
+    document.getElementById('DetailTime').innerHTML ='<p>'+ data.open[0].start+' - '+data.open[0].end+'</p>';
+    CreateClock(startTime,endTime);
+    //CreateClock(11,1)
+
+    document.getElementById('businessName').innerHTML='<h3>'+data.bName+'</h3>';
+    document.getElementById('title1').innerHTML ='<p> - '+ data.title1+' -  </p>';
+    document.getElementById('title2').innerHTML ='<p> - '+ data.title1+' -  </p>';
+    document.getElementById('title3').innerHTML ='<p> - '+ data.title1+' -  </p>';
+    document.getElementById('businessName1').innerHTML ='<h3>'+ data.bName+'</h1>';
+    document.getElementById('businessName2').innerHTML ='<h3>'+ data.bName+'</h1>';
+    document.getElementById('businessName3').innerHTML ='<h3>'+ data.bName+'</h1>';
+    document.getElementById('selectedRestaurantImg1').innerHTML = '<img src="'+blink1+'" width="1200" height="700">';
+    document.getElementById('selectedRestaurantImg2').innerHTML = '<img src="'+blink2+'" width="1200" height="700">';
+    document.getElementById('selectedRestaurantImg3').innerHTML = '<img src="'+blink3+'" width="1200" height="700">';
+    document.getElementById('longlat').innerHTML ='<iframe id ="longlat" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/map/?long='+long_1_str+'&lat='+lat_1_str+'" marginwidth="0" marginheight="0" style="height:500px; width:100%;" scrolling="no"></iframe>';
+    document.getElementById('displayAddress').innerHTML ='<p>'+ data.displayAddress+'</p>';
+    document.getElementById('displayPhone').innerHTML ='<p>'+ data.displayPhone+'</p>';
+   // document.getElementById('isClosed').innerHTML = data.isClosed;
+   // document.getElementById('rating').innerHTML = data.rating;
+   // document.getElementById('reviewCount').innerHTML = data.reviewCount;
+    var ratingPresent = data.rating/5*100;
+    //console.log("ratingPresent:"+ratingPresent);
+    var GradientOptions = {
+
+          series: [ratingPresent],
+          chart: {
+          height: 210,
+          type: 'radialBar',
+          toolbar: {
+            show: false
+          }
+        },
+        plotOptions: {
+          radialBar: {
+            startAngle: -90,
+            endAngle: 270,
+             hollow: {
+              margin: 0,
+              size: '70%',
+              background: '#fff',
+              image: undefined,
+              imageOffsetX: 0,
+              imageOffsetY: 0,
+              position: 'front',
+              dropShadow: {
+                enabled: true,
+                top: 3,
+                left: 0,
+                blur: 4,
+                opacity: 0.24
+              }
+            },
+            track: {
+              background: '#fff',
+              strokeWidth: '67%',
+              margin: 0, // margin is in pixels
+              dropShadow: {
+                enabled: true,
+                top: -3,
+                left: 0,
+                blur: 4,
+                opacity: 0.35
+              }
+            },
+        
+            dataLabels: {
+              show: true,
+              name: {
+                offsetY: -10,
+                show: true,
+                color: '#888',
+                fontSize: '12px'
+              },
+              value: {
+                formatter: function(val) {
+
+                  return  "Average Rating: "+data.rating;
+                },
+                color: '#888',
+                fontSize: '12px',
+                show: true,
+              }
+            }
+          }
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shade: 'dark',
+            type: 'horizontal',
+            shadeIntensity: 0.5,
+            gradientToColors: ['#ABE5A1'],
+            inverseColors: true,
+            opacityFrom: 1,
+            opacityTo: 1,
+            stops: [0, 100]
+          }
+        },
+        stroke: {
+          lineCap: 'round'
+        },
+        labels: ["Reviews: "+data.reviewCount],
+        };
+
+        var Gradientchart = new ApexCharts(document.querySelector("#GradientChart"), GradientOptions);
+        Gradientchart.render();
+
+
+    
+  })
+  .catch(function(error) {
+        console.log(JSON.stringify(error));
+  });  
+    var list = document.getElementById("showRecommendation");
+
+  while (list.hasChildNodes()) {  
+    list.removeChild(list.firstChild);
+
+  }
+  $.getJSON('arules.json', function(arulesData) {
+
+      var dataArray=arulesData[0].LHS.split(",");
+
+
+      for(i = 0; i<arulesData.length+1; i++){
+        if( i < arulesData.length){
+          if(arulesData[i].business_id == window.restID){
+          //  console.log(arulesData[i].name)
+            var dataArray=arulesData[i].LHS.split(",");
+
+            for(j = 0; j < dataArray.length; j++){
+              //console.log(dataArray[j])
+              const arulesUrl = '/yelp?address='+dataArray[j];
+              fetch(arulesUrl).then((resp) => resp.json()).then(function(data) {
+          
+                var btn = document.createElement("DIV");
+                 btn.innerHTML = '<div class="col-sm-4"><div class="thumbnail"><img src="'+
+                  data.url1+'" alt="..." width="100%" height="100%"><div class="caption"><p><a href="#myPage"  onclick="run('+
+                  "'"+data.id+"'"+')">'+data.bName+'</a></p></div></div></div>';
+                document.body.appendChild(btn);
+                document.getElementById("showRecommendation").appendChild(btn);  
+
+              })
+              .catch(function(error) {
+                    console.log(JSON.stringify(error));
+              }); 
+            }
+
+          }
+        }
+        
+        if(i == arulesData.length ){
+            if(restRec.length>1){
+              var nowNum =restRec.length-2;
+              
+              const arulesUrl = '/yelp?address='+restRec[nowNum];
+              fetch(arulesUrl).then((resp) => resp.json()).then(function(data) {
+          
+                var btn = document.createElement("DIV");
+                 btn.innerHTML = '<div class="col-sm-4"><div class="thumbnail"><img src="'+
+                  data.url1+'" alt="..." width="100%" height="100%"><div class="caption"><p><a href="#myPage"  onclick="run('+
+                  "'"+data.id+"'"+')">'+data.bName+'</a></p></div></div></div>';
+                document.body.appendChild(btn);
+                document.getElementById("showRecommendation").appendChild(btn);  
+
+
+              })
+              .catch(function(error) {
+                    console.log(JSON.stringify(error));
+              }); 
+              //console.log("lastId:"+restRec[nowNum]);
+            }
+
+        }
+      }
+  })
+  
+
+}
+
+    </script>
+        <script>
+          $(document).on('ready',function (){
+          $.getJSON('arules.json', function(data) { 
+          $.each(data, function(name, business_id) {
+          $("#usuarios_dropdown").append('<li onclick="run('+"'"+business_id.business_id+"'"+')"><a>' + business_id.name + '<a></li>');
+          }); // close each()
+        }); // close getJSON()
+      });
+    </script>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+</body>
+</html>
