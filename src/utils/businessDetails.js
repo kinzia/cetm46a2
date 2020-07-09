@@ -6,7 +6,7 @@ const businessDetails = (address, callback) => {
     
     client.business(address).then(response => {
 
-        console.log(response.jsonBody);
+      //  console.log(response.jsonBody);
       //  console.log(response.jsonBody.hours[0].open);
         callback(undefined,{
         id : response.jsonBody.id,

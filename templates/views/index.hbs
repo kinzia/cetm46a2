@@ -10,16 +10,16 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="../js/d3.js"></script>
+  <script src="../js/gBarChart.js"></script>
   <script src="../js/clock.js"></script>
-
+  <script src="../js/barchart.js"></script>
+  <script src="../js/donut.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
   <style>
     @import url(https://fonts.googleapis.com/css?family=Roboto);
 
-body {
-  font-family: Roboto, sans-serif;
-}
 
 #chart {
   max-width: 650px;
@@ -174,7 +174,24 @@ body {
      line {
   display: block;
   stroke: black;
-}
+  }
+        .bar {
+            fill: #5f89ad;
+        }
+        
+        .axis {
+            font-size: 13px;
+        }
+        
+        .axis path,
+        .axis line {
+            fill: none;
+            display: none;
+        }
+        
+        .label {
+            font-size: 13px;
+        }
   </style>
 </head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -270,12 +287,14 @@ body {
 
     </div>
     <div class="col-sm-4">
-      <div id="GradientChart"></div>
+    <!--  <div id="GradientChart"></div>-->
+      <div id="donutDiv"></div>
       <p class="text-center"><strong>Total Reviews & Average Rating</strong></p><br>
     </div>
     <div class="col-sm-4">
-      <div id="barChart"></div>
-      <p class="text-center"><strong>Recent Ratings</strong></p><br>
+      </br>
+    <!--  <div id="barChart"></div>-->
+    <div id="top_x_div"></div>
     </div>
   </div>
 </div>
@@ -305,7 +324,10 @@ body {
     <span class="glyphicon glyphicon-chevron-up"></span>
   </a><br></br>
   <p>Yelp Shop Recommendation  Made By</br>Chow Chi Kin, Kevin</br>bh63np@student.sunderland.ac.uk</p></br>
-
+   <div id="chart"></div>
+    <div id="chart1"></div>
+    <div id="chart2"></div>
+    <div id="chart3"></div>
 </footer>
 
 
@@ -348,34 +370,9 @@ function run(p1){
         var r2 = data.reviewJson.reviews[i].rating;
       }
     }
-    //console.log(data.reviewJson.reviews[0]);
-    var barChartOptions = {
-          series: [{
-          data: [r0, r1, r2]
-          
-        }],
-          chart: {
-          type: 'bar',
-          height: 200,
-          toolbar: {
-            show: false
-          }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: true,
-            
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        xaxis: {
-          categories: [d0, d1, d2],
-        }
-    };
-    var barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
-    barChart.render();
+    gBarchart(d0,d1,d2,r0,r1,r2);
+
+
   })
   .catch(function(error) {
         console.log(JSON.stringify(error));
@@ -390,9 +387,7 @@ function run(p1){
     var long_1 = data.long_1;
     var long_1_str = long_1.toString();
     var lat_1_str = lat_1.toString(); 
-   // console.log(data.open[0]);
-   // console.log(data.open[0].start/100);
-   // console.log((data.open[0].end/100)-12);
+
     var startTime = data.open[0].start/100;
     var endTime = (data.open[0].end/100)-12;
     document.getElementById('ClockDiv').innerHTML='<div class="ClockChart" id="ClockDiv"></div>';
@@ -416,95 +411,8 @@ function run(p1){
    // document.getElementById('isClosed').innerHTML = data.isClosed;
    // document.getElementById('rating').innerHTML = data.rating;
    // document.getElementById('reviewCount').innerHTML = data.reviewCount;
-    var ratingPresent = data.rating/5*100;
-    //console.log("ratingPresent:"+ratingPresent);
-    var GradientOptions = {
-
-          series: [ratingPresent],
-          chart: {
-          height: 210,
-          type: 'radialBar',
-          toolbar: {
-            show: false
-          }
-        },
-        plotOptions: {
-          radialBar: {
-            startAngle: -90,
-            endAngle: 270,
-             hollow: {
-              margin: 0,
-              size: '70%',
-              background: '#fff',
-              image: undefined,
-              imageOffsetX: 0,
-              imageOffsetY: 0,
-              position: 'front',
-              dropShadow: {
-                enabled: true,
-                top: 3,
-                left: 0,
-                blur: 4,
-                opacity: 0.24
-              }
-            },
-            track: {
-              background: '#fff',
-              strokeWidth: '67%',
-              margin: 0, // margin is in pixels
-              dropShadow: {
-                enabled: true,
-                top: -3,
-                left: 0,
-                blur: 4,
-                opacity: 0.35
-              }
-            },
-        
-            dataLabels: {
-              show: true,
-              name: {
-                offsetY: -10,
-                show: true,
-                color: '#888',
-                fontSize: '12px'
-              },
-              value: {
-                formatter: function(val) {
-
-                  return  "Average Rating: "+data.rating;
-                },
-                color: '#888',
-                fontSize: '12px',
-                show: true,
-              }
-            }
-          }
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'horizontal',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#ABE5A1'],
-            inverseColors: true,
-            opacityFrom: 1,
-            opacityTo: 1,
-            stops: [0, 100]
-          }
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ["Reviews: "+data.reviewCount],
-        };
-
-        var Gradientchart = new ApexCharts(document.querySelector("#GradientChart"), GradientOptions);
-        Gradientchart.render();
-
-
-    
+    document.getElementById('donutDiv').innerHTML='<div class="donutChart" id="donutDiv"></div>';
+    CreateDonutChart(data.rating,data.reviewCount);
   })
   .catch(function(error) {
         console.log(JSON.stringify(error));

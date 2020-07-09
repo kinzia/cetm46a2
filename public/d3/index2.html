@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Pete Timpone-D3.js-Second Exercise</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+                <script src="https://code.jquery.com/jquery-1.11.3.min.js" charset="utf-8"></script>
+		<style type="text/css">
+                    rect:hover {
+			fill: red;
+                    }
+		</style>
+	</head>
+	<body>
+            <p>Click on this text to scale the height of the chart.</p>
+		<script type="text/javascript">
+			//Width and height
+			var w = 500,
+                            h = 250,
+                            alpha,
+                            sortNumber=-1;
+                            heightNumber=0;
+                        
+			var dataset = [ [5, 23, 75], [10, 14, 34], [13, 67, 23], [19, 10, 65], [21, 42, 29],
+	 				[25, 25, 25], [22, 90, 30], [18, 57, 17], [15, 25, 35], [13, 26, 39],
+					[11, 17, 85], [12, 36, 24], [15, 60, 45], [20, 41, 11], [18, 77, 33],
+					[17, 85, 55], [16, 23, 44], [18, 35, 23], [23, 55, 15], [25, 45, 100]
+				      ];
+                        
+
+                        var xScale = d3.scale.ordinal()
+                            .domain(
+                                d3.range(dataset.length)
+                            )
+                            .rangeRoundBands(
+                                [0, w]
+                            );
+                    
+			var yScale = d3.scale.linear()
+                            .domain(
+                                [0, d3.max(dataset,
+                                        function(d,i){
+                                            return dataset[i][0]; 
+                                        }
+                                    )
+                                ]
+                            )
+                            .range(
+                                [0, h]
+                            );
+
+			
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+                                        
+                        //Rectangle init                        
+			svg.selectAll("rect")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return xScale(i);
+			   })
+			   .attr("y", function(d, i) {
+			   		return h + 10 - yScale(dataset[i][0]);
+			   })
+			   .attr("width",function(d, i) {
+			   		return xScale.rangeBand() * (dataset[i][1]/100);
+                           })
+			   .attr("height", function(d, i) {
+			   		return yScale(dataset[i][0]);
+			   })
+			   .attr("fill", function(d) {
+					return "rgb(0, 0, " + 200 + ")";
+			   })
+			   .attr("fill-opacity", function(d) {
+					return (d[2] * .75) / 100 + .25;
+                            })
+                           .on("click",
+                               function() {
+                                   sortBars();
+                               }
+                           );
+                        
+                        //Text Init
+			svg.selectAll("text")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d, i) {
+                                return dataset[i][0];
+			   })
+			   .attr("text-anchor", "left")
+			   .attr("x", function(d, i) {
+			   	return i * (w / dataset.length);
+			   })
+			   .attr("y", function(d, i) {
+			   	return h - yScale(dataset[i][0]) + 8;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "red");
+                        
+                        d3.select('p').on('click',
+                            function(){
+                                updateHeight();
+                            }
+                        );
+                
+                //Sort update
+                var sortBars =
+                    function() {
+                        sortNumber++;
+                        sortNumber=sortNumber%3;
+                        
+                        
+                        console.log("heightNumber= "+heightNumber);
+                        console.log("sortNumber= "+sortNumber);
+                        
+                        dataset.sort(
+                            function(a, b){
+                                return a[sortNumber] - b[sortNumber];
+                            }
+                        );
+                        
+                        svg.selectAll("rect")        
+                        .sort(
+                            function(a, b) {
+                                return d3.ascending(a[sortNumber], b[sortNumber]);
+                            }
+                        )
+                        .transition()
+                        .delay(
+                            function(d, i) {
+                                return i / dataset.length * 1000;
+                            }
+                        )
+                        .duration(1000)
+                        .attr("x",
+                            function(d, i) {
+                                return xScale(i);
+                            }
+                        )
+                      
+                   
+                        svg.selectAll("text")
+                        .sort(
+                            function(a, b) {
+                                
+                                return d3.ascending(a[sortNumber], b[sortNumber]);
+                            }
+                        )
+                        .transition()
+                        .delay(
+                            function(d, i) {
+                                return i / dataset.length * 1000;
+                            }
+                        )
+                        .duration(500)
+                        .text(
+                            function(d, i) {
+                                var index=i+1,
+                                    elem="rect:nth-child(" + index + ")",
+                                    textData;
+
+			   	switch(sortNumber) {
+                                    case 1:
+                                        textData=Math.round(($(elem).attr("width")/xScale.rangeBand())*100);
+                                        break;
+                                    case 2:
+                                        textData=Math.round((($(elem).attr("fill-opacity"))-.25)/.0075);
+                                        break;
+                                    default:
+                                    if(heightNumber===1){    
+                                        textData=Math.round($(elem).attr("height")/10*3);
+                                    }else if(heightNumber ===2){
+                                        textData=Math.round($(elem).attr("height")/10*3/2); 
+                                    }else{
+                                        textData=Math.round(($(elem).attr("height")/10));
+                                    }
+                                }
+                                return textData;
+			   }
+                        )
+                        .attr("x",
+                            function(d, i) {
+                                return xScale(i);
+                            }
+                        );
+                    };
+                
+                //Height update
+                var updateHeight=
+                    function(){
+                        heightNumber++;                                              
+                        heightNumber=heightNumber%3;
+                        if (heightNumber===0){
+                            heightNumber=3;
+                        }
+                        
+                        //Rectangle height update 
+                        svg.selectAll("rect")
+                        .transition()
+                        .delay(
+                            function(d, i) {
+                                return i / dataset.length * 1000;
+                            }
+                        )
+                        .duration(500)
+			.attr("y", function(d, i) {
+                                
+			    return h + 10 - yScale(dataset[i][0]*heightNumber/3);
+			    
+			})
+			.attr("height", function(d, i) {
+                                    
+	      		    return yScale(dataset[i][0]*heightNumber/3);
+			})
+                
+                        console.log("heightNumber= "+ heightNumber);
+                        console.log("sortNumber= "+sortNumber);
+                        
+                        
+                        //text height update
+                        svg.selectAll("text")
+                        .transition()
+                        .delay(
+                            function(d, i) {
+                                return i / dataset.length * 1000;
+                            }
+                        )
+                        .duration(500)
+			.attr("y", function(d, i) {
+                            return h + 10 - yScale(dataset[i][0]*heightNumber/3);
+			})
+			.attr("height", function(d, i) {
+              		    return yScale(dataset[i][0]*heightNumber/3);
+			});
+                    };
+                    
+		</script>
+                
+	</body>
+</html>
